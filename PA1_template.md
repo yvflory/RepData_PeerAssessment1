@@ -1,24 +1,19 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 First, we'll need to make sure that all required packages are loaded.
-```{r, message = FALSE}
 
+```r
 require(dplyr)
 require(ggplot2)
 
 ## Loading and preprocessing the data
 data <- read.csv("activity.csv")
-
 ```
   
   
 1. What is the mean total number of steps taken per day?  
   
-```{r}
+
+```r
 ## I grouped the data, so I could simply run summarize from the
 ## dplyr package. 
 data <- group_by(data,date)
@@ -36,16 +31,25 @@ summary$date <- as.Date(summary$date)
 ## 2-month period.
 g <- ggplot(data=summary, aes(x=date, y=total_steps)) + geom_histogram(stat="identity") + scale_x_date() + xlab ("Date") + ylab("Total steps taken")
 g
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
 ## These are the mean and median of the total number of steps
 ## taken across all days.
 sprintf("Mean: %.2f, Median: %d", mean_steps, median_steps)
+```
+
+```
+## [1] "Mean: 9354.23, Median: 10395"
 ```
   
   
 2. What is the average daily activity pattern?  
   
-```{r}
+
+```r
 ## Calculate the mean for each interval.
 data <- group_by(data,interval)
 summary <- summarize(data,activity = mean(steps, na.rm = TRUE))
@@ -61,11 +65,14 @@ g <- ggplot(data=summary, aes(x=interval2, y=activity)) + geom_line() +
     scale_x_continuous(breaks=seq(0, 300, 60), labels = c(0,500, 1000, 1500, 2000, 2500)) + xlab ("Interval") + ylab("Mean steps taken")
 g
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
   
   
 3. Imputing missing values  
   
-```{r}
+
+```r
 ## Count all NA's
 ## They would only occur in the column "steps", as the other columns
 ## contain independent variables
@@ -95,7 +102,11 @@ summary$date <- as.Date(summary$date)
 ## 2-month period.
 g <- ggplot(data=summary, aes(x=date, y=total_steps)) + geom_histogram(stat="identity") + scale_x_date() + xlab ("Date") + ylab("Total steps taken")
 g
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+```r
 ## These are the mean and median of the total number of steps
 ## taken across all days.
 ## Weirdly, they're the same...
@@ -103,13 +114,17 @@ g
 ## to fill in the missing values. But hey, that's definitely not
 ## sophisticated, so should be fine, right?
 sprintf("Mean: %.2f, Median: %.2f", mean_steps, median_steps)
+```
 
+```
+## [1] "Mean: 10766.19, Median: 10766.19"
 ```
   
   
 4. Are there differences in activity patterns between weekdays and weekends?  
   
-```{r}
+
+```r
 ## Necessary to reload data
 data <- read.csv("activity.csv")
 data$date <- as.Date(data$date)
@@ -144,5 +159,6 @@ summary <- mutate(summary, interval2 = 1:length(interval))
 
 g <- ggplot(data=summary, aes(x=interval2, y=activity)) + geom_line() + facet_grid(. ~ weekdays) + scale_x_continuous(breaks=seq(0, 300, 60), labels = c(0,500, 1000, 1500, 2000, 2500))  + xlab ("Interval") + ylab("Mean steps taken")
 g
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
